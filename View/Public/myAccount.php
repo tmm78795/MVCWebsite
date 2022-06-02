@@ -50,17 +50,24 @@
 <h1 class='text-center'>Booking Information</h1>
 
 
-</div>
+
 
 
 <br>
 
 <?php
+        $pSize = count($pastShows);
+        $uSize = count($upcomingShows);
 
-        $size = count($shows);
-        if($size  > 0) {
-echo '<div class="table">';
-            echo "<table style='width:80%';>";
+        if ($pSize < 1 && $uSize < 1) {
+          
+            echo "<hr><h3 class='text-center'>No bookings Yet</h3>";
+        
+        }
+        if($pSize  > 0) {
+            echo '<div >';
+            echo "<table class='table table-hover'>";
+            echo "<h2>Past Shows</h2>";
             echo "<tr>";
             echo "<th>Movie Title</th>";
             echo "<th>Show Date</th>";
@@ -69,24 +76,60 @@ echo '<div class="table">';
             echo "</tr>";
             
 
-            for($i= 0; $i < $size; $i++)
+            for($i= 0; $i < $pSize; $i++)
             {
                 echo "<tr>";
-                echo "<td><a href=index.php?function=selectedMovie&movieId=".$shows[$i]['movieId'].">".$shows[$i]['title']."</a></td>";
-                echo "<td>".$shows[$i]['date']."</td>";
-                echo "<td>".$shows[$i]['time']."</td>";
-                echo "<td>".$shows[$i]['seats']."</td>";
+                echo "<td><a href=index.php?function=selectedMovie&movieId=".$pastShows[$i]['movieId'].">".$pastShows[$i]['title']."</a></td>";
+                echo "<td>".$pastShows[$i]['date']."</td>";
+                echo "<td>".$pastShows[$i]['time']."</td>";
+                echo "<td>".$pastShows[$i]['seats']."</td>";
                 echo "</tr>";
             }
 
            
             echo "</table>";
-    echo'</div>';
+            echo'</div>';
         }
 
-        else {
-            echo "<hr><h3 class='text-center'>No bookings Yet</h3>";
-        }
+        echo "<br><hr>";
+        if($uSize  > 0) {
+          echo '<div >';
+          echo "<table class='table table-hover'>";
+          echo "<h2>Upcoming Shows</h2>";
+          echo "<tr>";
+          echo "<th>Movie Title</th>";
+          echo "<th>Show Date</th>";
+          echo "<th>Show Time</th>";
+          echo "<th>Seats</th>";
+          echo "<th>Delete Booking</th>";
+          echo "</tr>";
+          
+
+          for($i= 0; $i < $uSize; $i++)
+          {
+              echo "<tr>";
+              echo "<td><a href=index.php?function=selectedMovie&movieId=".$upcomingShows[$i]['movieId'].">".$upcomingShows[$i]['title']."</a></td>";
+              echo "<td>".$upcomingShows[$i]['date']."</td>";
+              echo "<td>".$upcomingShows[$i]['time']."</td>";
+              echo "<td>".$upcomingShows[$i]['seats']."</td>";
+              echo "<td>";
+              echo "<form action='index.php?function=deleteBooking' method='post'>";
+              echo "<input type='hidden' name='movieId' value='".$upcomingShows[$i]['movieId']."'>";
+              echo "<input type='hidden' name='date' value='".$upcomingShows[$i]['date']."'>";
+              echo "<input type='hidden' name='time' value='".$upcomingShows[$i]['time']."'>";
+              echo "<input type='hidden' name='seats' value='".$upcomingShows[$i]['seats']."'>";
+              echo '<button type="submit"><span class="glyphicon glyphicon-remove"></span></button>';
+              echo "</form>";
+              echo "</td>";
+              echo "</tr>";
+          }
+
+         
+          echo "</table>";
+          echo'</div>';
+      }
+
+
 
     ?>
 
