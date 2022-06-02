@@ -133,22 +133,47 @@ class ShowModel {
     // to get bookings of a user 
     public function getMyBookings($username) {
 
+        $date = date('Y-m-d');
+
         $query = "SELECT DATE(`ticket`.`movieTime`) AS `date`, TIME(`ticket`.`movieTime`) AS `time`,
         `ticket`.`seats`, `movie`.`title`, `movie`.`movieId`
         FROM `ticket`
         INNER JOIN `movie` ON`ticket`.`movieId` = `movie`.`movieId`
-         WHERE `ticket`.`username` = '".$username."';";
+         WHERE `ticket`.`username` = '".$username."' AND DATE(`ticket`.`movieTime`) < '$date';";
         $result = $this->con->query($query);
 
         $shows = array();
+        $pastShows = array();
+        $upcomingShows = array();
 
         if($result->num_rows > 0) {
 
             while($show = $result->fetch_assoc()) {
-                array_push($shows, $show);
+                array_push($pastShows, $show);
+                
             }
 
         }
+
+        $query = "SELECT DATE(`ticket`.`movieTime`) AS `date`, TIME(`ticket`.`movieTime`) AS `time`,
+        `ticket`.`seats`, `movie`.`title`, `movie`.`movieId`
+        FROM `ticket`
+        INNER JOIN `movie` ON`ticket`.`movieId` = `movie`.`movieId`
+         WHERE `ticket`.`username` = '".$username."' AND DATE(`ticket`.`movieTime`) >= '$date';";
+
+        $result = $this->con->query($query);
+
+        if($result->num_rows > 0) {
+
+            while($show = $result->fetch_assoc()) {
+                array_push($upcomingShows, $show);
+                
+            }
+
+        }
+
+        $shows['pastShows'] = $pastShows;
+        $shows['upcomingShows'] = $upcomingShows;
 
         return $shows;
         

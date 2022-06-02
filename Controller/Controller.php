@@ -127,111 +127,55 @@
 
         public function movieProfile() 
         {
-            if(isset($_SESSION['isLoggedIn']) && $_SESSION['isLoggedIn'] == 1 )  
-            {
-                if (isset($_POST['movieId'])) {
-                    $movieId = Controller::sanitizeString($_POST['movieId']);
-                    require_once "Model/MovieModel.php";
-                    $movieModel = new MovieModel();
-                    $movie = $movieModel->getMovie($movieId);
-                    include_once "View/selectedMovie.php";
-                }
+            $isLoggedIn = false;
+            if (isset($_SESSION['isLoggedIn']) && $_SESSION['isLoggedIn'] == 1) {
 
-                else if(isset($_GET['movieId'])) 
-                {
-                    $movieId = Controller::sanitizeString($_GET['movieId']);
-                    require_once "Model/MovieModel.php";
-                    $movieModel = new MovieModel();
-                    $movie = $movieModel->getMovie($movieId);
-                    include_once "View/Public/selectedMovie.php";
-                }
+            
+                $isLoggedIn = true;
                 
-                else 
-                {
-                    header("location:index.php?function=invoke");
-                }
-               
-
             }
-            else 
-            {
-                header("location:index.php?function=invoke");
-            }
-
-        }
-
-        public function booking1() {
-            if(isset($_SESSION['isLoggedIn']) && $_SESSION['isLoggedIn'] == 1 )  
-            {
-                if (isset($_GET['movieId'])) {
-                    $movieId = Controller::sanitizeString($_GET['movieId']);
-                    require_once "Model/MovieModel.php";
-                    $movieModel = new MovieModel();
-                    $movie = $movieModel->getMovie($movieId);
-                    require_once "Model/ShowModel.php";
-                    $showModelObj = new ShowModel();
-                    $shows = $showModelObj->getAllShow($movieId);
-                    include_once "View/booking1.php";
-                }
+            
+            if (isset($_POST['movieId']) ) {
                 
-                else 
-                {
-                    header("location:index.php?function=homePage");
-                }
-               
-
+                $movieId = Controller::sanitizeString($_POST['movieId']);
+                require_once "Model/MovieModel.php";
+                $movieModel = new MovieModel();
+                $movie = $movieModel->getMovie($movieId);
+                $dates = $movieModel->getDistinctShowDates($movieId);
+                include_once "View/selectedMovie.php";
             }
-            else 
+
+            else if(isset($_GET['movieId'])) 
             {
-                header("location:index.php?function=invoke");
+                $movieId = Controller::sanitizeString($_GET['movieId']);
+                require_once "Model/MovieModel.php";
+                $movieModel = new MovieModel();
+                $movie = $movieModel->getMovie($movieId);
+                $dates = $movieModel->getDistinctShowDates($movieId);
+                include_once "View/Public/selectedMovie.php";
             }
-
-
-        }
-
-        public function booking2() {
-            if(isset($_SESSION['isLoggedIn']) && $_SESSION['isLoggedIn'] == 1)  
-            {
-                if(isset($_POST['movieId']) && isset($_POST['date']))
-                {
-                    $movieId = Controller::sanitizeString($_POST['movieId']);
-                    $date = Controller::sanitizeString($_POST['date']);
-                    require_once "Model/MovieModel.php";
-                    $movieModel = new MovieModel();
-                    $movie = $movieModel->getMovie($movieId);
-    
-                    require_once "Model/ShowModel.php";
-                    $showModelObj = new ShowModel();
-                    $shows = $showModelObj->dateShows($movieId, $date);
-                    include_once "View/booking2.php";
-                }
-
-                else 
-                {
-                    header("location:index.php?function=homePage");
-                }
-               
-
-            }
-
+            
             else 
             {
                 header("location:index.php?function=invoke");
             }
             
 
+            
+           
         }
 
+        
 
-        public function booking3() {
+        public function booking() {
             if(isset($_SESSION['isLoggedIn']) && $_SESSION['isLoggedIn'] == 1)
             {
 
-                if (isset($_POST['movieId']) && isset($_POST['date']) && isset($_POST['time'])) 
+                if (isset($_POST['movieId']) && isset($_POST['showDate']) && isset($_POST['showTime'])) 
                 {
                     $movieId = Controller::sanitizeString($_POST['movieId']);
-                    $date = Controller::sanitizeString($_POST['date']);
-                    $time = Controller::sanitizeString($_POST['time']);
+                    $date = Controller::sanitizeString($_POST['showDate']);
+                    $time = Controller::sanitizeString($_POST['showTime']);
                     $seats = Controller::sanitizeString($_POST['seats']);
                     require_once "Model/MovieModel.php";
                     $movieModel = new MovieModel();
@@ -242,7 +186,7 @@
                     $confirmed = $showModelObj->booking($movie, $date, $time, $seats);
                     $total = $seats * $movie->getPrice();
                     $movieTitle = $movie->getTitle();
-                    include_once "View/booking3.php";
+                    include_once "View/Public/booking.php";
                 }
                 
                 else 
@@ -269,11 +213,43 @@
                 require_once "Model/ShowModel.php";
                 $showModelObj = new ShowModel();
                 $shows = $showModelObj->getMyBookings($username);
+                $pastShows = $shows['pastShows'];
+                $upcomingShows = $shows['upcomingShows'];
                 
                 include_once "View/Public/myAccount.php";
             }
         }
 
+        public function deleteBooking() {
+
+            if(isset($_SESSION['isLoggedIn']) && $_SESSION['isLoggedIn'] == 1)
+            {
+                if(isset($_POST['movieId']) && isset($_POST['date']) && isset($_POST['time']) && isset($_POST['seats'])) {
+
+                    $movieId = $_POST['movieId'];
+                    $showTime = $_POST['time'];
+                    $showDate = $_POST['date'];
+                    $seats = $_POST['seats'];
+                    $username = $_SESSION['username'];
+
+                    require_once "Model/booking.php";
+                    $this->model = new Booking();
+                    $this->model->deleteBooking($username, $movieId, $showDate, $showTime, $seats);
+
+                    header("location:index.php?function=myAccount");
+
+
+                    
+                }
+
+            }
+
+        
+        }
+
     }
+
+
+    
 
 ?>

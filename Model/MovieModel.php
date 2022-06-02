@@ -52,6 +52,29 @@ class MovieModel {
             }
         }
     }
+    
+    public function getDistinctShowDates($movieId){
+
+        $query = "SELECT DISTINCT DATE(showTime) AS `date`
+            FROM `show` 
+            WHERE `movieId` = $movieId";
+
+        $result = $this->con->query($query);
+
+        $showDates = [];
+
+        while($date = $result->fetch_assoc()) {
+            array_push($showDates, $date);
+        }
+
+        if(count($showDates) > 0) {
+            return $showDates;
+        }
+
+        return -1;
+        
+
+    }
 
 
 

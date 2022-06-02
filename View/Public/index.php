@@ -181,7 +181,10 @@
     foreach($movies as $movie) {
     
     echo '<div class="col-lg-2">';
-    echo '<a href="index.php?function=movieProfile&movieId='.$movie->getMovieId().'"><img class="img-responsive img-rounded " src="'.$movie->getPathInfo().'"></a>';
+    echo '<a href="index.php?function=movieProfile&movieId='.$movie->getMovieId().'">
+    <div class="view overlay zoom">
+      <img class="img-responsive img-rounded img-fluid" src="'.$movie->getPathInfo().'" >
+    </div></a>';
     echo '</div>';
     // $i++;
 
@@ -208,7 +211,7 @@
   </footer>
 
 
-  <script src='View/JS/search.js'></script>
+  <script src='View/JS/movieSearch.js'></script>
 </body>
 
 </html>

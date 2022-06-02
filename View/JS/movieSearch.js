@@ -1,18 +1,18 @@
 $(document).ready(function() {
-    load_data();
+    
     function load_data(data) {
 
         $.ajax(
             {
                 type: 'post',
-                url: 'Model/toSearch.php',
+                url: 'Model/JQuery/toSearch.php',
                 data:{
-                   data:data
+                  string:data
                 },
                 success: function(data) {
                     $('#searchResult').html(data)
                     .css('background-color', 'white')
-                    .css('text-decoration', 'none')
+                    .css('text-decoration', 'none');
                     
                 }
 
@@ -30,7 +30,8 @@ $(document).ready(function() {
             load_data(input);
       }
       else {
-        load_data();
+        $('#searchResult').html("");
+        
       }
       
     })
